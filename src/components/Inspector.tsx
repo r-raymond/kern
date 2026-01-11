@@ -27,14 +27,14 @@ export function Inspector(): JSX.Element {
         ))}
       </div>
 
-      <div class="section-header" style={{ "margin-top": "1lh" }}>Tags</div>
+      <div class="section-header">Tags</div>
       <div class="tag-list">
         {tags.map(tag => (
           <span class="tag">#{tag}</span>
         ))}
       </div>
 
-      <div class="section-header" style={{ "margin-top": "1lh" }}>Backlinks</div>
+      <div class="section-header">Backlinks</div>
       <div class="backlink-list">
         <div class="backlink-item">
           <span class="tree-branch">└── </span>

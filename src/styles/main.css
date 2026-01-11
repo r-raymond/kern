@@ -194,10 +194,15 @@ body {
 .section-header {
   color: var(--text-secondary);
   border-bottom: 1px solid var(--border-color);
-  padding: 0.5lh 1ch;
+  padding: 0 1ch;
+  margin-top: 1lh;
   text-transform: uppercase;
   font-size: 11px;
   letter-spacing: 0.1ch;
+}
+
+.section-header:first-child {
+  margin-top: 0;
 }
 
 /* Scrollbar Styling */
@@ -230,13 +235,12 @@ body {
 
 /* Inspector Properties */
 .property-list {
-  padding: 0.5lh 1ch;
+  padding: 0 1ch;
 }
 
 .property-row {
   display: flex;
   justify-content: space-between;
-  padding: 0.25lh 0;
 }
 
 .property-label {
@@ -249,7 +253,7 @@ body {
 
 /* Tags */
 .tag-list {
-  padding: 0.5lh 1ch;
+  padding: 0 1ch;
   display: flex;
   flex-wrap: wrap;
   gap: 0.5ch;
@@ -259,13 +263,14 @@ body {
   background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
   padding: 0 0.5ch;
+  margin: 2px 0;
   font-size: 12px;
   color: var(--accent);
 }
 
 /* Backlinks */
 .backlink-list {
-  padding: 0.5lh 1ch;
+  padding: 0 1ch;
 }
 
 .backlink-item {
