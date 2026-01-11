@@ -18,18 +18,29 @@
   --inspector-width: 30ch;
   --statusbar-height: 1lh;
 
-  /* Colors - Dark Theme */
-  --bg-primary: #0d0d0d;
-  --bg-secondary: #141414;
-  --bg-tertiary: #1a1a1a;
-  --border-color: #333;
-  --text-primary: #e0e0e0;
-  --text-secondary: #888;
-  --text-muted: #555;
-  --accent: #7aa2f7;
+  /* Gruvbox Dark (default) */
+  --bg-primary: #282828;
+  --bg-secondary: #1d2021;
+  --bg-tertiary: #3c3836;
+  --border-color: #504945;
+  --text-primary: #ebdbb2;
+  --text-secondary: #a89984;
+  --text-muted: #665c54;
+  --accent: #83a598;
 
   /* Ghost Syntax */
   --ghost-opacity: 0.3;
+}
+
+:root[data-theme="gruvbox-light"] {
+  --bg-primary: #fbf1c7;
+  --bg-secondary: #f2e5bc;
+  --bg-tertiary: #ebdbb2;
+  --border-color: #d5c4a1;
+  --text-primary: #3c3836;
+  --text-secondary: #665c54;
+  --text-muted: #928374;
+  --accent: #458588;
 }
 
 /* Base Styles */
@@ -389,4 +400,69 @@ body {
   min-width: 4ch;
   display: inline-block;
   text-align: center;
+}
+
+/* ============================================
+   Command Palette
+   ============================================ */
+
+.command-palette-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 15vh;
+  z-index: 200;
+}
+
+.command-palette {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  width: 50ch;
+  max-width: 90vw;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.command-input {
+  width: 100%;
+  padding: 0.75lh 1ch;
+  background: var(--bg-primary);
+  border: none;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--font-size);
+  outline: none;
+}
+
+.command-input::placeholder {
+  color: var(--text-muted);
+}
+
+.command-list {
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.command-item {
+  padding: 0.5lh 1ch;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+
+.command-item:hover,
+.command-item.selected {
+  background: var(--bg-tertiary);
+}
+
+.command-item.selected {
+  color: var(--accent);
+}
+
+.command-empty {
+  padding: 0.5lh 1ch;
+  color: var(--text-muted);
+  font-style: italic;
 }

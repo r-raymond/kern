@@ -1,6 +1,7 @@
 import { createSignal, For, onMount, type JSX } from 'solid-js'
 import { documentView, applyEdit, isInitialized, type LineView } from '../store/document'
 import { HelpOverlay } from './HelpOverlay'
+import { CommandPalette } from './CommandPalette'
 
 export type EditorMode = 'normal' | 'insert'
 
@@ -15,6 +16,7 @@ export function KernEditor(): JSX.Element {
   const [cursorCol, setCursorCol] = createSignal(0)
   const [pendingOperator, setPendingOperator] = createSignal<PendingOperator>(null)
   const [showHelp, setShowHelp] = createSignal(false)
+  const [showCommandPalette, setShowCommandPalette] = createSignal(false)
 
   let editorRef: HTMLDivElement | undefined
 
@@ -212,6 +214,13 @@ export function KernEditor(): JSX.Element {
     const preventDefault = () => {
       e.preventDefault()
       e.stopPropagation()
+    }
+
+    // Command palette: Cmd/Ctrl+K
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      preventDefault()
+      setShowCommandPalette(true)
+      return
     }
 
     if (mode() === 'normal') {
@@ -458,6 +467,7 @@ export function KernEditor(): JSX.Element {
       onKeyDown={handleKeyDown}
     >
       {showHelp() && <HelpOverlay onClose={() => setShowHelp(false)} />}
+      {showCommandPalette() && <CommandPalette onClose={() => setShowCommandPalette(false)} />}
       <For each={lines()}>
         {(line, index) => (
           <div class={`editor-line ${index() === cursorLine() ? 'editor-line-active' : ''}`}>
