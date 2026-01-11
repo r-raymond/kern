@@ -6,9 +6,13 @@ export type EditorMode = 'normal' | 'insert'
 // Export mode signal so Layout can pass it to StatusBar
 export const [mode, setMode] = createSignal<EditorMode>('normal')
 
+// Pending operator for vim commands like 'd' waiting for motion
+type PendingOperator = 'd' | null
+
 export function KernEditor(): JSX.Element {
   const [cursorLine, setCursorLine] = createSignal(0)
   const [cursorCol, setCursorCol] = createSignal(0)
+  const [pendingOperator, setPendingOperator] = createSignal<PendingOperator>(null)
 
   let editorRef: HTMLDivElement | undefined
 
@@ -130,6 +134,31 @@ export function KernEditor(): JSX.Element {
     setCursorCol(0)
   }
 
+  // Find end position for 'w' motion (start of next word)
+  const findNextWordStart = (line: string, col: number): number => {
+    let pos = col
+    // Skip current word (non-whitespace)
+    while (pos < line.length && !/\s/.test(line[pos])) pos++
+    // Skip whitespace
+    while (pos < line.length && /\s/.test(line[pos])) pos++
+    // If we reached end of line, return line length
+    return pos
+  }
+
+  // Delete a range of characters from startCol to endCol
+  const deleteRange = async (startCol: number, endCol: number) => {
+    if (!isInitialized()) return
+    const deleteCount = endCol - startCol
+    if (deleteCount <= 0) return
+
+    // Delete from endCol position, going backwards deleteCount chars
+    await applyEdit({
+      line: cursorLine(),
+      col: endCol,
+      delete: deleteCount,
+    })
+  }
+
   // Keyboard handler
   const handleKeyDown = async (e: KeyboardEvent) => {
     // Prevent default for keys we handle
@@ -202,6 +231,35 @@ export function KernEditor(): JSX.Element {
           preventDefault()
           setCursorLine(0)
           setCursorCol(0)
+          break
+        case 'd':
+          preventDefault()
+          setPendingOperator('d')
+          break
+        case 'w':
+          preventDefault()
+          if (pendingOperator() === 'd') {
+            // dw - delete word
+            const lineContent = lines()[cursorLine()]?.content || ''
+            const endCol = findNextWordStart(lineContent, cursorCol())
+            await deleteRange(cursorCol(), endCol)
+            setPendingOperator(null)
+          } else {
+            // w motion - move to next word start
+            const lineContent = lines()[cursorLine()]?.content || ''
+            const nextPos = findNextWordStart(lineContent, cursorCol())
+            if (nextPos < lineContent.length) {
+              setCursorCol(nextPos)
+            } else if (cursorLine() < lines().length - 1) {
+              // Move to start of next line
+              setCursorLine(l => l + 1)
+              setCursorCol(0)
+            }
+          }
+          break
+        case 'Escape':
+          preventDefault()
+          setPendingOperator(null)
           break
       }
     } else if (mode() === 'insert') {
