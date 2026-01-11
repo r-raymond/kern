@@ -71,6 +71,15 @@ body {
   pointer-events: none;
 }
 
+/* Markdown Text Styles */
+strong {
+  font-weight: 700;
+}
+
+em {
+  font-style: italic;
+}
+
 /* ASCII Border Characters */
 .border-char {
   color: var(--border-color);

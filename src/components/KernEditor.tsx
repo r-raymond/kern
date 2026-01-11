@@ -413,12 +413,14 @@ export function KernEditor(): JSX.Element {
     if (!content) return <></>
 
     const parts: JSX.Element[] = []
+    let isHeading = false
 
     // Handle headings at start
     const headingMatch = content.match(/^(#{1,6}\s)/)
     if (headingMatch) {
       parts.push(<span class="ghost-syntax">{headingMatch[1]}</span>)
       content = content.slice(headingMatch[1].length)
+      isHeading = true
     }
 
     // Handle list markers at start
@@ -429,27 +431,35 @@ export function KernEditor(): JSX.Element {
     }
 
     // Handle bold/italic/code in remaining content
-    const segments = content.split(/(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g)
+    const segments = content.split(/(\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_|`[^`]+`)/g)
+    const contentParts: JSX.Element[] = []
 
     for (const segment of segments) {
-      if (segment.startsWith('**') && segment.endsWith('**')) {
-        parts.push(
+      // Bold: **text** or __text__ (min 5 chars: 2 + 1 + 2)
+      if ((segment.startsWith('**') && segment.endsWith('**') && segment.length > 4) ||
+          (segment.startsWith('__') && segment.endsWith('__') && segment.length > 4)) {
+        const delim = segment.slice(0, 2)
+        contentParts.push(
           <>
-            <span class="ghost-syntax">**</span>
+            <span class="ghost-syntax">{delim}</span>
             <strong>{segment.slice(2, -2)}</strong>
-            <span class="ghost-syntax">**</span>
+            <span class="ghost-syntax">{delim}</span>
           </>
         )
-      } else if (segment.startsWith('*') && segment.endsWith('*') && segment.length > 2) {
-        parts.push(
+      // Italic: *text* or _text_ (min 3 chars: 1 + 1 + 1)
+      } else if ((segment.startsWith('*') && segment.endsWith('*') && segment.length > 2) ||
+                 (segment.startsWith('_') && segment.endsWith('_') && segment.length > 2)) {
+        const delim = segment[0]
+        contentParts.push(
           <>
-            <span class="ghost-syntax">*</span>
+            <span class="ghost-syntax">{delim}</span>
             <em>{segment.slice(1, -1)}</em>
-            <span class="ghost-syntax">*</span>
+            <span class="ghost-syntax">{delim}</span>
           </>
         )
-      } else if (segment.startsWith('`') && segment.endsWith('`')) {
-        parts.push(
+      // Code: `text` (min 3 chars: 1 + 1 + 1)
+      } else if (segment.startsWith('`') && segment.endsWith('`') && segment.length > 2) {
+        contentParts.push(
           <>
             <span class="ghost-syntax">`</span>
             <code>{segment.slice(1, -1)}</code>
@@ -457,8 +467,15 @@ export function KernEditor(): JSX.Element {
           </>
         )
       } else if (segment) {
-        parts.push(<>{segment}</>)
+        contentParts.push(<>{segment}</>)
       }
+    }
+
+    // Wrap heading content in strong for bold styling
+    if (isHeading) {
+      parts.push(<strong>{contentParts}</strong>)
+    } else {
+      parts.push(...contentParts)
     }
 
     return <>{parts}</>
