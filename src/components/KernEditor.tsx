@@ -223,6 +223,11 @@ export function KernEditor(): JSX.Element {
       return
     }
 
+    // Don't handle keys when command palette or help is open
+    if (showCommandPalette() || showHelp()) {
+      return
+    }
+
     if (mode() === 'normal') {
       switch (e.key) {
         case 'h':
@@ -467,7 +472,7 @@ export function KernEditor(): JSX.Element {
       onKeyDown={handleKeyDown}
     >
       {showHelp() && <HelpOverlay onClose={() => setShowHelp(false)} />}
-      {showCommandPalette() && <CommandPalette onClose={() => setShowCommandPalette(false)} />}
+      {showCommandPalette() && <CommandPalette onClose={() => { setShowCommandPalette(false); editorRef?.focus() }} />}
       <For each={lines()}>
         {(line, index) => (
           <div class={`editor-line ${index() === cursorLine() ? 'editor-line-active' : ''}`}>
