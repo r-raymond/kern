@@ -5,7 +5,7 @@
 
 :root {
   /* Typography */
-  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+  --font-mono: 'Fira Mono', ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
   --font-size: 14px;
   --line-height: 1.5;
 
