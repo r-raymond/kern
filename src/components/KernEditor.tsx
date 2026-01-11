@@ -1,5 +1,6 @@
 import { createSignal, createEffect, For, onMount, type JSX } from 'solid-js'
 import { documentView, applyEdit, isInitialized, type LineView } from '../store/document'
+import { HelpOverlay } from './HelpOverlay'
 
 export type EditorMode = 'normal' | 'insert'
 
@@ -13,6 +14,7 @@ export function KernEditor(): JSX.Element {
   const [cursorLine, setCursorLine] = createSignal(0)
   const [cursorCol, setCursorCol] = createSignal(0)
   const [pendingOperator, setPendingOperator] = createSignal<PendingOperator>(null)
+  const [showHelp, setShowHelp] = createSignal(false)
 
   let editorRef: HTMLDivElement | undefined
 
@@ -310,7 +312,15 @@ export function KernEditor(): JSX.Element {
           break
         case 'Escape':
           preventDefault()
-          setPendingOperator(null)
+          if (showHelp()) {
+            setShowHelp(false)
+          } else {
+            setPendingOperator(null)
+          }
+          break
+        case '?':
+          preventDefault()
+          setShowHelp(h => !h)
           break
       }
     } else if (mode() === 'insert') {
@@ -444,6 +454,7 @@ export function KernEditor(): JSX.Element {
       tabindex={0}
       onKeyDown={handleKeyDown}
     >
+      {showHelp() && <HelpOverlay onClose={() => setShowHelp(false)} />}
       <For each={lines()}>
         {(line, index) => (
           <div class={`editor-line ${index() === cursorLine() ? 'editor-line-active' : ''}`}>

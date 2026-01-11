@@ -327,3 +327,66 @@ body {
 .mode-insert {
   color: #9ece6a;
 }
+
+/* ============================================
+   Help Overlay
+   ============================================ */
+
+.help-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.help-window {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: 1lh 2ch;
+  max-width: 60ch;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.help-header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5lh;
+  margin-bottom: 1lh;
+  font-weight: 500;
+}
+
+.help-close {
+  color: var(--text-muted);
+}
+
+.help-section h3 {
+  color: var(--accent);
+  margin: 1lh 0 0.5lh 0;
+  font-size: inherit;
+  font-weight: 500;
+}
+
+.help-section:first-child h3 {
+  margin-top: 0;
+}
+
+.help-commands {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.25lh 2ch;
+}
+
+.help-commands kbd {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  padding: 0 0.5ch;
+  margin-right: 1ch;
+  min-width: 4ch;
+  display: inline-block;
+  text-align: center;
+}
