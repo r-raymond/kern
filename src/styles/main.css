@@ -103,7 +103,7 @@ body {
   border-left: 1px solid var(--border-color);
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 1lh 1ch;
+  padding: 0 1ch;
 }
 
 /* Status Bar */
