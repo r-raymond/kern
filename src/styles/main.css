@@ -265,3 +265,65 @@ body {
 .backlink-item:hover {
   text-decoration: underline;
 }
+
+/* ============================================
+   Cursor Styles
+   ============================================ */
+
+/* Editor focus states */
+.editor-content:focus {
+  outline: none;
+}
+
+/* Active line highlight */
+.editor-line-active {
+  background: var(--bg-secondary);
+}
+
+/* Block cursor for normal mode */
+.cursor-normal {
+  background: var(--accent);
+  color: var(--bg-primary);
+}
+
+/* Line cursor for insert mode */
+.cursor-insert {
+  position: relative;
+}
+
+.cursor-insert::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--accent);
+  animation: cursor-blink 1s step-end infinite;
+}
+
+/* Cursor blink animation */
+@keyframes cursor-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* ============================================
+   Mode Indicator Styles
+   ============================================ */
+
+.mode-indicator {
+  font-weight: 500;
+  padding: 0 1ch;
+  margin-right: 2ch;
+  text-transform: uppercase;
+  letter-spacing: 0.05ch;
+}
+
+.mode-normal {
+  color: var(--accent);
+}
+
+.mode-insert {
+  color: #9ece6a;
+}

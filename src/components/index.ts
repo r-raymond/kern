@@ -1,5 +1,5 @@
 export { Layout } from './Layout'
-export { KernEditor } from './KernEditor'
+export { KernEditor, mode, type EditorMode } from './KernEditor'
 export { SidebarTree } from './SidebarTree'
 export { Inspector } from './Inspector'
 export { StatusBar } from './StatusBar'

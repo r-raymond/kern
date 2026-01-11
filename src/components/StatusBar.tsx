@@ -1,8 +1,16 @@
 import type { JSX } from 'solid-js'
+import type { EditorMode } from './KernEditor'
 
-export function StatusBar(): JSX.Element {
+interface StatusBarProps {
+  mode: EditorMode
+}
+
+export function StatusBar(props: StatusBarProps): JSX.Element {
   return (
     <>
+      <span class={`mode-indicator mode-${props.mode}`}>
+        -- {props.mode.toUpperCase()} --
+      </span>
       <span>
         <kbd>^K</kbd> Search
       </span>

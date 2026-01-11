@@ -1,6 +1,6 @@
 import type { JSX } from 'solid-js'
 import { SidebarTree } from './SidebarTree'
-import { KernEditor } from './KernEditor'
+import { KernEditor, mode } from './KernEditor'
 import { Inspector } from './Inspector'
 import { StatusBar } from './StatusBar'
 
@@ -20,7 +20,7 @@ export function Layout(): JSX.Element {
       </aside>
 
       <footer class="kern-statusbar">
-        <StatusBar />
+        <StatusBar mode={mode()} />
       </footer>
     </div>
   )
