@@ -327,6 +327,14 @@ export function KernEditor(): JSX.Element {
             }
           }
           break
+        case 'x':
+          preventDefault()
+          // Delete character under cursor
+          const xLineContent = lines()[cursorLine()]?.content || ''
+          if (xLineContent.length > 0 && cursorCol() < xLineContent.length) {
+            await deleteRange(cursorCol(), cursorCol() + 1)
+          }
+          break
         case 'Escape':
           preventDefault()
           if (showHelp()) {
