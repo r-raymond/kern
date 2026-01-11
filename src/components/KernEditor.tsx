@@ -159,6 +159,51 @@ export function KernEditor(): JSX.Element {
     })
   }
 
+  // Delete the entire current line
+  const deleteLine = async () => {
+    if (!isInitialized()) return
+    const lineCount = lines().length
+
+    if (lineCount === 1) {
+      // Last remaining line - just clear it
+      const lineContent = lines()[0]?.content || ''
+      if (lineContent.length > 0) {
+        await applyEdit({
+          line: 0,
+          col: lineContent.length,
+          delete: lineContent.length,
+        })
+      }
+      setCursorCol(0)
+      return
+    }
+
+    // Delete line content + newline
+    const lineContent = lines()[cursorLine()]?.content || ''
+    const isLastLine = cursorLine() === lineCount - 1
+
+    if (isLastLine) {
+      // Delete previous newline + this line's content
+      await applyEdit({
+        line: cursorLine(),
+        col: lineContent.length,
+        delete: lineContent.length + 1,
+      })
+      setCursorLine(l => Math.max(0, l - 1))
+    } else {
+      // Delete this line's content + following newline
+      await applyEdit({
+        line: cursorLine(),
+        col: lineContent.length + 1,
+        delete: lineContent.length + 1,
+      })
+    }
+
+    // Clamp cursor column to new line
+    const newLineContent = lines()[cursorLine()]?.content || ''
+    setCursorCol(Math.min(cursorCol(), Math.max(0, newLineContent.length - 1)))
+  }
+
   // Keyboard handler
   const handleKeyDown = async (e: KeyboardEvent) => {
     // Prevent default for keys we handle
@@ -234,7 +279,13 @@ export function KernEditor(): JSX.Element {
           break
         case 'd':
           preventDefault()
-          setPendingOperator('d')
+          if (pendingOperator() === 'd') {
+            // dd - delete line
+            await deleteLine()
+            setPendingOperator(null)
+          } else {
+            setPendingOperator('d')
+          }
           break
         case 'w':
           preventDefault()
