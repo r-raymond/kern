@@ -216,8 +216,8 @@ export function KernEditor(): JSX.Element {
       e.stopPropagation()
     }
 
-    // Command palette: Cmd/Ctrl+K
-    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    // Command palette: Cmd/Ctrl+K or Cmd/Ctrl+P
+    if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'p')) {
       preventDefault()
       setShowCommandPalette(true)
       return
