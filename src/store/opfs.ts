@@ -12,6 +12,21 @@ const KERN_DIR = 'kern-data'
 const SNAPSHOTS_DIR = 'snapshots'
 const UPDATES_DIR = 'updates'
 
+// Helper to iterate directory entries (TypeScript doesn't include this in default lib)
+async function* iterateDirectory(dir: FileSystemDirectoryHandle): AsyncGenerator<FileSystemHandle> {
+  // @ts-expect-error - values() exists in browsers but not in TS lib
+  for await (const entry of dir.values()) {
+    yield entry
+  }
+}
+
+// Helper to convert Uint8Array to ArrayBuffer (avoids SharedArrayBuffer type issues)
+function toArrayBuffer(data: Uint8Array): ArrayBuffer {
+  const buffer = new ArrayBuffer(data.length)
+  new Uint8Array(buffer).set(data)
+  return buffer
+}
+
 interface StorageStats {
   snapshotCount: number
   updatesCount: number
@@ -63,7 +78,7 @@ class OPFSStorage {
     const snapshotsDir = await this.root.getDirectoryHandle(SNAPSHOTS_DIR)
     const fileHandle = await snapshotsDir.getFileHandle(`${id}.loro`, { create: true })
     const writable = await fileHandle.createWritable()
-    await writable.write(data)
+    await writable.write(toArrayBuffer(data))
     await writable.close()
 
     // Clear updates for this document after snapshot
@@ -80,7 +95,7 @@ class OPFSStorage {
     const timestamp = Date.now()
     const fileHandle = await updatesDir.getFileHandle(`${id}-${timestamp}.delta`, { create: true })
     const writable = await fileHandle.createWritable()
-    await writable.write(delta)
+    await writable.write(toArrayBuffer(delta))
     await writable.close()
   }
 
@@ -111,7 +126,7 @@ class OPFSStorage {
     const snapshotsDir = await this.root.getDirectoryHandle(SNAPSHOTS_DIR)
     const documents: string[] = []
 
-    for await (const entry of snapshotsDir.values()) {
+    for await (const entry of iterateDirectory(snapshotsDir)) {
       if (entry.kind === 'file' && entry.name.endsWith('.loro')) {
         documents.push(entry.name.replace('.loro', ''))
       }
@@ -145,7 +160,7 @@ class OPFSStorage {
 
     const updatesDir = await this.root.getDirectoryHandle(UPDATES_DIR)
 
-    for await (const entry of updatesDir.values()) {
+    for await (const entry of iterateDirectory(updatesDir)) {
       if (entry.kind === 'file' && entry.name.startsWith(`${id}-`)) {
         await updatesDir.removeEntry(entry.name)
       }
@@ -165,19 +180,19 @@ class OPFSStorage {
     }
 
     const snapshotsDir = await this.root.getDirectoryHandle(SNAPSHOTS_DIR)
-    for await (const entry of snapshotsDir.values()) {
+    for await (const entry of iterateDirectory(snapshotsDir)) {
       if (entry.kind === 'file') {
         stats.snapshotCount++
-        const file = await entry.getFile()
+        const file = await (entry as FileSystemFileHandle).getFile()
         stats.totalBytes += file.size
       }
     }
 
     const updatesDir = await this.root.getDirectoryHandle(UPDATES_DIR)
-    for await (const entry of updatesDir.values()) {
+    for await (const entry of iterateDirectory(updatesDir)) {
       if (entry.kind === 'file') {
         stats.updatesCount++
-        const file = await entry.getFile()
+        const file = await (entry as FileSystemFileHandle).getFile()
         stats.totalBytes += file.size
       }
     }

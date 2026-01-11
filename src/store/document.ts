@@ -5,7 +5,7 @@
  * between the UI, WASM engine, and OPFS persistence.
  */
 
-import { createSignal, createEffect, onCleanup } from 'solid-js'
+import { createSignal } from 'solid-js'
 import { kernEngine, type DocumentView, type LineView, type EditDelta } from '../workers/kern-engine'
 import { opfsStorage } from './opfs'
 

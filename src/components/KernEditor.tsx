@@ -1,4 +1,4 @@
-import { createSignal, createEffect, For, onMount, type JSX } from 'solid-js'
+import { createSignal, For, onMount, type JSX } from 'solid-js'
 import { documentView, applyEdit, isInitialized, type LineView } from '../store/document'
 import { HelpOverlay } from './HelpOverlay'
 
@@ -52,12 +52,12 @@ export function KernEditor(): JSX.Element {
 
   // Movement helpers
   const moveLeft = () => {
-    const [line, col] = clampCursor(cursorLine(), cursorCol() - 1)
+    const [, col] = clampCursor(cursorLine(), cursorCol() - 1)
     setCursorCol(col)
   }
 
   const moveRight = () => {
-    const [line, col] = clampCursor(cursorLine(), cursorCol() + 1)
+    const [, col] = clampCursor(cursorLine(), cursorCol() + 1)
     setCursorCol(col)
   }
 
