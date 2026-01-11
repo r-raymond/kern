@@ -247,7 +247,10 @@ export function KernEditor(): JSX.Element {
           break
         case 'o':
           preventDefault()
-          moveToLineEnd()
+          // Position cursor after last character for newline insertion
+          // (moveToLineEnd() positions ON last char in normal mode, which is wrong here)
+          const oLineContent = lines()[cursorLine()]?.content || ''
+          setCursorCol(oLineContent.length)
           await insertNewline()
           setMode('insert')
           break
